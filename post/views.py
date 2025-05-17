@@ -6,7 +6,7 @@ from .serializer import TweetSerializer, TweetCreateSerializer, TweetUpdateSeria
 # Create your views here.
 class TweetLists(ListAPIView):
     serializer_class = TweetSerializer
-    permission_classes = [JWTPermission]
+    # permission_classes = [JWTPermission]
     # pagination_class = StandardResultsSetPagination
     ordering_fields = ['created_at', 'likes_count']
 
