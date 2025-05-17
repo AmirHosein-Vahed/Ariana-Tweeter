@@ -38,6 +38,8 @@ coverage/
 # Temporary files
 tmp/
 temp/
+__pycache__/
+migrations/
 
 # Runtime data
 pids/
