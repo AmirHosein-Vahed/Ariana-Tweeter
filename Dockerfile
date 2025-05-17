@@ -1,35 +1,27 @@
-FROM python:3.11-slim
+FROM python:3.9-alpine
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    DJANGO_SETTINGS_MODULE=config.settings
+ENV PYTHONUNBUFFERED 1 \
+    PYTHONDONTWRITEBYTECODE 1
 
-# Set work directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt .
+RUN apk update && apk add --no-cache \
+    build-base
+
+COPY requirements.txt /app/
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
-COPY . .
+COPY . /app/
 
-# Create and set permissions for entrypoint script
-RUN echo '#!/bin/sh\n\
-python manage.py makemigrations --noinput\n\
-python manage.py migrate --noinput\n\
-exec "$@"' > /entrypoint.sh && \
-    chmod +x /entrypoint.sh
+RUN apt install gunicorn
+RUN python manage.py collectstatic --noinput
+RUN python manage.py migrate
 
-# Set entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8000
 
-# Run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Command to run the Django development server
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "twitter.wsgi:application"]
