@@ -8,6 +8,8 @@ This project is a clone of Twitter's API functionality, implementing core featur
 git clone https://github.com/AmirHosein-Vahed/Ariana-Tweeter.git twitter
 cd twitter
 pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
 python manage.py runserver localhost:8000
 ```
 or use docker to build and run
